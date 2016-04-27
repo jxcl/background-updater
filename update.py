@@ -6,7 +6,7 @@ import requests
 import subprocess
 from datetime import datetime
 
-from db_ops import url_is_dupe, add_image
+from db_ops import url_is_dupe, add_image, files_to_delete
 
 subreddits = ['EarthPorn', 'SpacePorn']
 sub_url = "http://www.reddit.com/r/{}/top.json"
@@ -49,5 +49,14 @@ def fetch_image():
                 return
 
 
+def delete_old_images():
+    old_files = files_to_delete()
+
+    for f in old_files:
+        pathname = os.path.join(directory, f)
+        os.remove(pathname)
+
+
 if __name__ == '__main__':
     fetch_image()
+    delete_old_images()
