@@ -32,6 +32,7 @@ def get_urls():
 
 def fetch_image():
     urls = get_urls()
+    random.shuffle(urls)
     for url in urls:
         if url_is_dupe(url):
             continue
