@@ -4,6 +4,9 @@ import os
 import random
 import requests
 import subprocess
+from datetime import datetime
+
+from db_ops import url_is_dupe, add_image
 
 subreddits = ['EarthPorn', 'SpacePorn']
 sub_url = "http://www.reddit.com/r/{}/top.json"
@@ -28,18 +31,23 @@ def get_urls():
 
 
 def set_desktop(filename):
-    subprocess.call(('feh', '--bg-scale', filename))
+    subprocess.call(('feh', '--bg-fill', filename))
 
 
 def fetch_image():
     urls = get_urls()
     random.shuffle(urls)
     for url in urls:
+        if url_is_dupe(url):
+            continue
+
         response = requests.get(url, stream=True, headers=headers)
         response.raise_for_status()
         ext = mimetypes.guess_extension(response.headers['Content-Type'])
         if ext in extensions:
-            filename = os.path.join(directory, "%s%s" % (basename, ext))
+            timestamp = datetime.utcnow()
+            file_id = add_image(timestamp, url, ext)
+            filename = os.path.join(directory, "%s%s" % (file_id, ext))
             with open(filename, 'wb') as f:
                 f.write(response.content)
                 set_desktop(filename)
