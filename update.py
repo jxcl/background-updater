@@ -30,10 +30,6 @@ def get_urls():
     return [url for url in urls if url.endswith(extensions)]
 
 
-def set_desktop(filename):
-    subprocess.call(('feh', '--bg-fill', filename))
-
-
 def fetch_image():
     urls = get_urls()
     random.shuffle(urls)
@@ -50,7 +46,6 @@ def fetch_image():
             filename = os.path.join(directory, "%s%s" % (file_id, ext))
             with open(filename, 'wb') as f:
                 f.write(response.content)
-                set_desktop(filename)
                 return
 
 
